@@ -3,7 +3,7 @@
   (:require [unicode-math.core :refer :all]))
 
 (defn deg2rad [degrees]
-  (* (/ degrees 180) pi))
+  (* (/ degrees 180) π))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Shape parameters ;;
