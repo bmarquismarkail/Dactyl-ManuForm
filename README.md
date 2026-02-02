@@ -1,6 +1,28 @@
 # The Dactyl-ManuForm Keyboard
 This is a fork of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
+## Development & Testing
+
+### Running the REPL
+
+This project uses [Leiningen](https://leiningen.org/) for development. To start a REPL:
+
+```sh
+lein repl
+```
+
+### Running Tests
+
+Tests are located in the `test/dactyl_keyboard/` directory and follow standard Clojure conventions. To run all tests:
+
+```sh
+lein test
+```
+
+### Coding Standards
+
+See `.github/instructions/clojure.instructions.md` for Clojure-specific coding patterns and REPL-driven development best practices.
+
 ![Imgur](http://i.imgur.com/LdjEhrR.jpg)
 
 The main change is that the thumb cluster was adapted from the [ManuForm keyboard](https://github.com/jeffgran/ManuForm) ([geekhack](https://geekhack.org/index.php?topic=46015.0)). The walls were changed to just drop to the floor. The keyboard is paramaterized to allow adjusting the following: 
