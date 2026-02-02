@@ -1,4 +1,4 @@
-# The Dactyl-ManuForm Keyboard
+exit# The Dactyl-ManuForm Keyboard
 This is a fork of the [Dactyl](https://github.com/adereth/dactyl-keyboard), a parameterized, split-hand, concave, columnar, ergonomic keyboard.
 
 ## Development & Testing

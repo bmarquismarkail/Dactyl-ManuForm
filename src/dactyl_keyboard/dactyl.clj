@@ -3,11 +3,11 @@
   (:require [clojure.core.matrix :refer [array matrix mmul]]
             [scad-clj.scad :refer :all]
             [scad-clj.model :refer :all]
-            [unicode-math.core :refer :all]))
+            [fastmath.core :as math]))
 
 
 (defn deg2rad [degrees]
-  (* (/ degrees 180) pi))
+  (* (/ degrees 180) math/PI))
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Shape parameters ;;
@@ -16,11 +16,11 @@
 (def nrows 4)
 (def ncols 5)
 
-(def α (/ π 12))                        ; curvature of the columns
-(def β (/ π 36))                        ; curvature of the rows
+(def α (/ math/PI 12))                        ; curvature of the columns
+(def β (/ math/PI 36))                        ; curvature of the rows
 (def centerrow (- nrows 3))             ; controls front-back tilt
 (def centercol 3)                       ; controls left-right tilt / tenting (higher number is more tenting)
-(def tenting-angle (/ π 12))            ; or, change this for more precise tenting control
+(def tenting-angle (/ math/PI 12))            ; or, change this for more precise tenting control
 (def column-style 
   (if (> nrows 5) :orthographic :standard))  ; options include :standard, :orthographic, and :fixed
 ; (def column-style :fixed)
@@ -82,7 +82,7 @@
                                    0
                                    (/ plate-thickness 2)]))
         side-nub (->> (binding [*fn* 30] (cylinder 1 2.75))
-                      (rotate (/ π 2) [1 0 0])
+                (rotate (/ math/PI 2) [1 0 0])
                       (translate [(+ (/ keyswitch-width 2)) 0 1])
                       (hull (->> (cube 1.5 2.75 plate-thickness)
                                  (translate [(+ (/ 1.5 2) (/ keyswitch-width 2))
@@ -369,7 +369,7 @@
 (def thumbcaps
   (union
    (thumb-1x-layout (sa-cap 1))
-   (thumb-15x-layout (rotate (/ π 2) [0 0 1] (sa-cap 1.5)))))
+   (thumb-15x-layout (rotate (/ math/PI 2) [0 0 1] (sa-cap 1.5)))))
 
 
 (def thumb
