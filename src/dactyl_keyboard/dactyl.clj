@@ -72,6 +72,55 @@
 (def mount-width (+ keyswitch-width 3))
 (def mount-height (+ keyswitch-height 3))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Amoeba Royale PCB space ;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Amoeba Royale v2.0 dimensions, taken from the Edge.Cuts and board setup in
+;; https://github.com/mtl/keyboard-pcbs/tree/master/amoeba-royale.
+;;
+;; The PCB is wider than single-plate, so its keepout intentionally extends
+;; into the webbing around a switch.  Placing this shape with key-place (or one
+;; of the thumb placement functions) keeps the PCB parallel to its switch.
+(def amoeba-pcb-width 18.796)
+(def amoeba-pcb-height 18.0975)
+(def amoeba-pcb-thickness 1.6)
+;; The Edge.Cuts bounding box is centered 0.09525 mm below the MX footprint.
+(def amoeba-pcb-center-offset [0 0.09525 0])
+
+;; Cherry MX plate and PCB reference planes are 5 mm apart.  Since local z=0
+;; is the underside of this model's plate, the top of the PCB is at -1 mm when
+;; plate-thickness is 4 mm.
+(def amoeba-plate-top-to-pcb-top 5.0)
+
+;; Space below the PCB for the Kailh hot-swap socket, diode/LED, solder joints,
+;; and a little assembly tolerance.  Increase this for unusually tall parts.
+(def amoeba-component-keepout 3.0)
+(def amoeba-xy-clearance 0.25)
+(def amoeba-z-clearance 0.25)
+
+(def amoeba-pcb-top-z (- plate-thickness amoeba-plate-top-to-pcb-top))
+(def amoeba-pcb-bottom-z (- amoeba-pcb-top-z amoeba-pcb-thickness))
+(def amoeba-keepout-bottom-z
+  (- amoeba-pcb-bottom-z amoeba-component-keepout amoeba-z-clearance))
+
+(def amoeba-pcb
+  (->> (cube amoeba-pcb-width amoeba-pcb-height amoeba-pcb-thickness)
+       (translate (map + amoeba-pcb-center-offset
+                       [0 0 (- amoeba-pcb-top-z
+                               (/ amoeba-pcb-thickness 2))]))))
+
+;; Start at the underside of the switch plate.  Besides making room for the
+;; board and bottom-side parts, this leaves a clear insertion path around the
+;; PCB where its 18.796 mm outline overhangs the 17.4 mm switch mount.
+(def amoeba-keepout
+  (let [height (- 0 amoeba-keepout-bottom-z)]
+    (->> (cube (+ amoeba-pcb-width (* 2 amoeba-xy-clearance))
+               (+ amoeba-pcb-height (* 2 amoeba-xy-clearance))
+               height)
+         (translate (map + amoeba-pcb-center-offset
+                         [0 0 (/ amoeba-keepout-bottom-z 2)])))))
+
 (def single-plate
   (let [top-wall (->> (cube (+ keyswitch-width 3) 1.5 plate-thickness)
                       (translate [0
@@ -378,6 +427,30 @@
    (thumb-15x-layout single-plate)
    (thumb-15x-layout larger-plate)
    ))
+
+;; PCB bounding bodies are useful in right-test.scad for checking the stack.
+;; The keepouts are subtracted from the printable model below.
+(def amoeba-pcbs
+  (union
+   (apply union
+          (for [column columns
+                row rows
+                :when (or (.contains [2 3] column)
+                          (not= row lastrow))]
+            (key-place column row amoeba-pcb)))
+   (thumb-1x-layout amoeba-pcb)
+   (thumb-15x-layout amoeba-pcb)))
+
+(def amoeba-keepouts
+  (union
+   (apply union
+          (for [column columns
+                row rows
+                :when (or (.contains [2 3] column)
+                          (not= row lastrow))]
+            (key-place column row amoeba-keepout)))
+   (thumb-1x-layout amoeba-keepout)
+   (thumb-15x-layout amoeba-keepout)))
 
 (def thumb-post-tr (translate [(- (/ mount-width 2) post-adj)  (- (/ mount-height  1.15) post-adj) 0] web-post))
 (def thumb-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height  1.15) post-adj) 0] web-post))
@@ -710,6 +783,7 @@
                     ; thumbcaps
                     ; caps
                     )
+                   amoeba-keepouts
                    (translate [0 0 -20] (cube 350 350 40)) 
                   ))
 
@@ -732,6 +806,7 @@
                     teensy-holder
                     rj9-holder
                     usb-holder-hole
+                    (color [0.15 0.45 0.15 0.8] amoeba-pcbs)
                     ; usb-holder-hole
                     ; ; teensy-holder-hole
                     ;             screw-insert-outers 

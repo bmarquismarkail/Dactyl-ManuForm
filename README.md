@@ -14,6 +14,22 @@ The main change is that the thumb cluster was adapted from the [ManuForm keyboar
 * Column offsets
 * Height
 
+### Amoeba Royale clearance
+
+The generated case reserves space below every matrix and thumb switch for an
+[Amoeba Royale v2.0](https://github.com/mtl/keyboard-pcbs/tree/master/amoeba-royale)
+single-switch PCB. The clearance follows each switch's complete local transform,
+including keywell curvature and thumb-cluster rotation. Relevant settings in
+`src/dactyl_keyboard/dactyl.clj` are:
+
+* `amoeba-plate-top-to-pcb-top` — switch-defined plate-to-PCB spacing
+* `amoeba-component-keepout` — space for the hot-swap socket and components
+* `amoeba-xy-clearance` and `amoeba-z-clearance` — assembly tolerances
+
+`things/right-test.scad` displays the PCB bounding bodies in green for visual
+inspection. The printable left and right models subtract the larger keepout
+volumes from the shell.
+
 I built a 4x5 version (40% size) for myself. The default has a bit more tenting than the Dactyl. See the following model files for configurations that may be most common:
 
 * [40% size, (4x5)](https://github.com/tshort/dactyl-keyboard/blob/master/things/right-4x5.stl)
