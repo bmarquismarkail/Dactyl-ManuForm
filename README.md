@@ -51,7 +51,7 @@ I built a 4x5 version (40% size) for myself. The default has a bit more tenting 
 **Setting up the Clojure environment**
 * [Install the Clojure runtime](https://clojure.org)
 * [Install the Leiningen project manager](http://leiningen.org/)
-* [Install OpenSCAD](http://www.openscad.org/)
+* [Install OpenSCAD](http://www.openscad.org/) with Manifold backend support
 
 **Generating the design**
 * Run `lein repl`
@@ -60,6 +60,8 @@ I built a 4x5 version (40% size) for myself. The default has a bit more tenting 
 * Use OpenSCAD to open a `.scad` file.
 * Make changes to design, repeat `load-file`, OpenSCAD will watch for changes and rerender.
 * When done, use OpenSCAD to export STL files
+* Export printable STLs with `--backend Manifold`; `scripts/check-stl.py` can
+  verify that an ASCII STL has no boundary or non-manifold edges
 
 **Tips**
 * [Some other ways to evaluate the clojure design file](http://stackoverflow.com/a/28213489)
