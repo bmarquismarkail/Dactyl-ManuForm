@@ -47,6 +47,8 @@
 ;; Y wall is only on the inside because the connector opening faces outside.
 (def rj9-connector-size [10.10 10.00 17.35])
 (def rj9-connector-clearance [0.68 0.50 1.03])
+;; Full-height mounting rib centered on the connector's right (+X) side.
+(def rj9-side-post-size [1.20 1.20 17.35])
 (def rj9-wall-thickness [2.0 2.5 2.0])
 (def rj9-floor-overlap 0.19)
 (def rj9-access-height 5)
@@ -683,6 +685,11 @@
 ;; its depth therefore removes material from the inner wall, not the opening.
 (def rj9-cavity-y-offset
   (/ (- (second rj9-outer-size) (second rj9-cavity-size)) 2))
+(def rj9-side-post-relief-size
+  (map + rj9-side-post-size rj9-connector-clearance))
+(def rj9-side-post-x-offset
+  (+ (/ (first rj9-connector-size) 2)
+     (/ (first rj9-side-post-size) 2)))
 
 (def rj9-cube (apply cube rj9-outer-size))
 (def rj9-space (translate rj9-position rj9-cube))
@@ -693,6 +700,8 @@
               (union
                (translate [0 rj9-cavity-y-offset 0]
                           (apply cube rj9-cavity-size))
+               (translate [rj9-side-post-x-offset rj9-cavity-y-offset 0]
+                          (apply cube rj9-side-post-relief-size))
                (translate [0 0 rj9-access-z-offset]
                           (cube (first rj9-cavity-size)
                                 (second rj9-outer-size)
