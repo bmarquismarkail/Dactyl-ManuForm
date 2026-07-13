@@ -41,6 +41,17 @@
 (def wall-xy-offset 5)                  ; offset in the x and/or y direction for the first downward-sloping part of the wall (negative)
 (def wall-thickness 2)                  ; wall thickness parameter; originally 5
 
+;; RJ-9 holder settings. Connector dimensions are mapped to the case axes as
+;; width (X), depth (Y), and vertical length (Z). Clearances are total, shared
+;; by both sides of an axis. X and Z wall thicknesses apply to both sides; the
+;; Y wall is only on the inside because the connector opening faces outside.
+(def rj9-connector-size [10.10 10.00 17.35])
+(def rj9-connector-clearance [0.68 0.50 1.03])
+(def rj9-wall-thickness [2.0 2.5 2.0])
+(def rj9-floor-overlap 0.19)
+(def rj9-access-height 5)
+(def rj9-access-z-offset 5)
+
 ;; Settings for column-style == :fixed 
 ;; The defaults roughly match Maltron settings
 ;;   http://patentimages.storage.googleapis.com/EP0219944A2/imgf0002.png
@@ -656,14 +667,36 @@
   ))
 
 
+(def rj9-cavity-size (map + rj9-connector-size rj9-connector-clearance))
+(def rj9-outer-size
+  [(+ (first rj9-cavity-size) (* 2 (first rj9-wall-thickness)))
+   (+ (second rj9-cavity-size) (second rj9-wall-thickness))
+   (+ (last rj9-cavity-size) (* 2 (last rj9-wall-thickness)))])
+
 (def rj9-start  (map + [0 -3  0] (key-position 0 0 (map + (wall-locate3 0 1) [0 (/ mount-height  2) 0]))))
-(def rj9-position  [(first rj9-start) (second rj9-start) 11])
-(def rj9-cube   (cube 14.78 13 22.38))
-(def rj9-space  (translate rj9-position rj9-cube))
-(def rj9-holder (translate rj9-position
-                  (difference rj9-cube
-                              (union (translate [0 2 0] (cube 10.78  9 18.38))
-                                     (translate [0 0 5] (cube 10.78 13  5))))))
+(def rj9-position
+  [(first rj9-start)
+   (second rj9-start)
+   (- (/ (last rj9-outer-size) 2) rj9-floor-overlap)])
+
+;; Keep the cavity flush with the outside (+Y) face of the holder.  Increasing
+;; its depth therefore removes material from the inner wall, not the opening.
+(def rj9-cavity-y-offset
+  (/ (- (second rj9-outer-size) (second rj9-cavity-size)) 2))
+
+(def rj9-cube (apply cube rj9-outer-size))
+(def rj9-space (translate rj9-position rj9-cube))
+(def rj9-holder
+  (translate rj9-position
+             (difference
+              rj9-cube
+              (union
+               (translate [0 rj9-cavity-y-offset 0]
+                          (apply cube rj9-cavity-size))
+               (translate [0 0 rj9-access-z-offset]
+                          (cube (first rj9-cavity-size)
+                                (second rj9-outer-size)
+                                rj9-access-height))))))
 
 (def usb-holder-position (key-position 1 0 (map + (wall-locate2 0 1) [0 (/ mount-height 2) 0])))
 (def usb-holder-size [6.5 10.0 13.6])

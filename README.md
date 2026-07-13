@@ -30,6 +30,14 @@ including keywell curvature and thumb-cluster rotation. Relevant settings in
 inspection. The printable left and right models subtract the larger keepout
 volumes from the shell.
 
+### RJ-9 holder
+
+The RJ-9 well is derived from configurable connector dimensions and tolerances
+in `src/dactyl_keyboard/dactyl.clj`. Set `rj9-connector-size` in case-axis order
+`[width depth vertical-length]`, then adjust `rj9-connector-clearance` and
+`rj9-wall-thickness` as needed. The outer holder size and floor position are
+calculated from those values.
+
 I built a 4x5 version (40% size) for myself. The default has a bit more tenting than the Dactyl. See the following model files for configurations that may be most common:
 
 * [40% size, (4x5)](https://github.com/tshort/dactyl-keyboard/blob/master/things/right-4x5.stl)
